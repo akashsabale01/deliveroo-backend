@@ -6,11 +6,10 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.ecorp.deliveroo.modal.enitity.Dish;
+import com.ecorp.deliveroo.modal.enitity.Restaurant;
 
 @Repository
-public interface DishRepository extends JpaRepository<Dish, UUID>  {
-	
-	Optional<Dish> findByName(String name);
+public interface RestaurantRepository extends JpaRepository<Restaurant, UUID> {
 
+	Optional<Restaurant> findByName(String name);
 }

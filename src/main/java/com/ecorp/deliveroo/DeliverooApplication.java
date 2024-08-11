@@ -9,7 +9,7 @@ public class DeliverooApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(DeliverooApplication.class, args);
-		// Swagger Url -> https://localhost:8080/swagger-ui/index.html
+		// Swagger Url -> http://localhost:8080/swagger-ui/index.html
 		
 	}
 

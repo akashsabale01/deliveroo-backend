@@ -9,16 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ecorp.deliveroo.modal.dto.CategoryDTO;
 import com.ecorp.deliveroo.modal.enitity.Category;
 import com.ecorp.deliveroo.service.CategoryService;
 
@@ -28,6 +28,24 @@ public class CategoryController {
 
 	@Autowired
 	private CategoryService categoryService;
+
+	@GetMapping
+	public ResponseEntity<List<Category>> getAllCategories() {
+		List<Category> categories = categoryService.getAllCategories();
+		return new ResponseEntity<>(categories, HttpStatus.OK);
+	}
+
+	@GetMapping("name/{name}")
+	public ResponseEntity<Category> getCategoryByName(@PathVariable String name) {
+		Category category = categoryService.getCategoryByName(name);
+		return ResponseEntity.ok(category);
+	}
+
+	@GetMapping("/id/{id}")
+	public ResponseEntity<Category> getCategoryById(@PathVariable UUID id) {
+		Category category = categoryService.getCategoryById(id);
+		return ResponseEntity.ok(category);
+	}
 
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Category> addCategory(@RequestParam("name") String name,
@@ -40,31 +58,17 @@ public class CategoryController {
 		}
 	}
 
-	@GetMapping
-	public ResponseEntity<List<Category>> getAllCategories() {
-		List<Category> categories = categoryService.getAllCategories();
-		return new ResponseEntity<>(categories, HttpStatus.OK);
+	@PutMapping("/{id}")
+	public ResponseEntity<Category> updateCategory(@PathVariable UUID id, @RequestParam("name") String name,
+			@RequestParam(value = "image", required = false) MultipartFile imageFile) throws IOException {
+		Category category = categoryService.updateCategory(id, name, imageFile);
+		return ResponseEntity.ok(category);
 	}
 
-	@GetMapping("name/{name}")
-	public ResponseEntity<Category> getCategory(@PathVariable String name) {
-		Optional<Category> category = categoryService.getCategoryByName(name);
-
-		if (category.isPresent()) {
-			return new ResponseEntity<>(category.get(), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-	}
-
-	@GetMapping("/id/{id}")
-	public ResponseEntity<Category> getCategoryById(@PathVariable UUID id) {
-		Optional<Category> category = categoryService.getCategoryById(id);
-		if (category.isPresent()) {
-			return new ResponseEntity<>(category.get(), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteCategory(@PathVariable UUID id) {
+		categoryService.deleteCategory(id);
+		return ResponseEntity.noContent().build();
 	}
 
 }
